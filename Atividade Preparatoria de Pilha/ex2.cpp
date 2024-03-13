@@ -1,12 +1,14 @@
-/* Classe pilha encadeada
+/* Classe pilha estatica
  *
  * by Renato Ramos da Silva, 2023, Estruturas de Dados
  *
  */
 #include <iostream>
-#include <stdexcept>
 
 using namespace std;
+
+const int PILHAVAZIA = -1;
+const int TAMANHOPILHA = 6;
 
 struct Dado {
     string nome;
@@ -14,69 +16,59 @@ struct Dado {
     int valor;
 };
 
-// Imprime as informações de um dado qualquer
+// Imprime informações de um dado qualquer.
 void imprimir_dado(const Dado& umDado) {
-        cout << "Nome: " << umDado.nome << "  Tipo: " << umDado.tipo << "  Valor: " << umDado.valor << endl;
-
+    cout << "Nome: " << umDado.nome << " ";
+    cout << "Tipo: " << umDado.tipo << " ";
+    cout << "Valor: " << umDado.valor << endl;
 }
 
-class Noh {
-    friend class Pilha;
-private:
-    Dado mDado; // poderia ser outro tipo de variável
-    Noh* mProx;
-public:
-    Noh(Dado v) {
-        mDado = v;
-        mProx = NULL;
-    }
-};
-
 class Pilha {
+private:
+    Dado* mPilha;
+    int posTopo;
+    unsigned tamanho;
 public:
     // Constrói pilha vazia.
     Pilha();
     // Destrutor que desaloca memória.
     ~Pilha();
-    // Retira e retorna o valor que estiver no mPtTopo da pilha.
-    // Escreve uma mensagem de erro se não for possível desempilhar.
-    Dado Desempilhar(); // retorna o mPtTopo da Pilha.
-    // Insere um valor na pilha.
+    // Retira e retorna o valor que estiver no topo da pilha.
+    Dado Desempilhar();
+    // Insere um elemento na pilha.
     void Empilhar(const Dado& d);
     // Apagar todos os dados da pilha.
     void LimparTudo();
-    // Imprime o valor que está no mPtTopo sem desempilhar.
+    // Imprime o valor que está no topo sem desempilhar.
     inline void Topo();
     // Informa se a pilha está Vazia.
     inline bool Vazia();
-private:
-    Noh* mPtTopo;
-    unsigned tamanho;
-
+    // Informa se a pilha está Cheia.
+    inline bool Cheia();
 };
 
 Pilha::Pilha() {
+    mPilha = new Dado[TAMANHOPILHA];
+    posTopo = PILHAVAZIA;
     tamanho = 0;
-    mPtTopo = NULL;
 }
 
 Pilha::~Pilha() {
-    LimparTudo();
+    delete[] mPilha;
 }
 
 Dado Pilha::Desempilhar() {
     if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
-    Dado aux = mPtTopo->mDado;
-    mPtTopo = mPtTopo->mProx;
-    tamanho--;
-    return aux;
-    // completar com o código, caso não esteja vazia
+    // completar com código necessário caso pilha não esteja vazia 
+    Dado topo = mPilha[posTopo];
+    posTopo--;
+    return topo;
 }
 
 void Pilha::Empilhar(const Dado& d) {
-    Noh* novo = new Noh(d);
-    novo->mProx = mPtTopo;
-    mPtTopo = novo;
+    if (this->Cheia()) throw runtime_error("Erro: pilha cheia!");
+    posTopo++;
+    mPilha[posTopo] = d;
     tamanho++;
 }
 
@@ -88,12 +80,16 @@ void Pilha::LimparTudo() {
 
 void Pilha::Topo() {
     if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
-    cout << "Nome: " << mPtTopo->mDado.nome << "  Tipo: " << mPtTopo->mDado.tipo << "  Valor: " << mPtTopo->mDado.valor;
+    // completar com código necessário caso pilha não esteja vazia      
+    imprimir_dado(mPilha[posTopo]);
 }
 
 bool Pilha::Vazia() {
-    if (tamanho == 0) return true;
-    return false;
+    return posTopo == PILHAVAZIA;
+}
+
+bool Pilha::Cheia() {
+    return posTopo == (TAMANHOPILHA-1);
 }
 
 
@@ -115,8 +111,11 @@ int main() {
             case 'l': // limpar tudo
                 pilha.LimparTudo();
                 break;
-            case 'e': // espiar                
-                pilha.Topo();
+            case 'e': // espiar 
+                if (!pilha.Vazia())
+                    pilha.Topo();
+                else
+                    cout << " Pilha vazia!" << endl;
                 break;
             case 'f': // finalizar
                 // checado no do-while
