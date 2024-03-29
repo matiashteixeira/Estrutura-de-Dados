@@ -39,9 +39,7 @@ public:
     void Empilhar(const Dado& d);
     // Apagar todos os dados da pilha.
     void LimparTudo();
-    void RemocaoEspecial(char c);
-    void SomaEspecial(char c);
-    void RemoveMaisAntigo();
+    void EncontraValores(int a, int b);
     // Imprime o valor que está no topo sem desempilhar.
     inline void Topo();
     // Informa se a pilha está Vazia.
@@ -69,31 +67,11 @@ Dado Pilha::Desempilhar() {
     return topo;
 }
 
-void Pilha::RemoveMaisAntigo() {
-    Pilha* p = new Pilha();
-    while (!Vazia()) {
-        p->Empilhar(Desempilhar());
-    }
-
-    imprimir_dado(p->Desempilhar());
-
-    while (!p->Vazia()) {
-        Empilhar(p->Desempilhar());
-    }
-
-    delete p;
-}
-
 void Pilha::Empilhar(const Dado& d) {
-    if (this->Cheia()) {
-        RemoveMaisAntigo();
-        Empilhar(d);
-    }
-    else {
-        posTopo++;
-        mPilha[posTopo] = d;
-        tamanho++;
-    }
+    if (this->Cheia()) throw runtime_error("Erro: pilha cheia!");
+    posTopo++;
+    mPilha[posTopo] = d;
+    tamanho++;
 }
 
 void Pilha::LimparTudo() {
@@ -113,43 +91,27 @@ bool Pilha::Vazia() {
 }
 
 bool Pilha::Cheia() {
-    return tamanho == (TAMANHOPILHA);
+    return posTopo == (TAMANHOPILHA - 1);
 }
 
-void Pilha::RemocaoEspecial(char c) {
-    Pilha* aux = new Pilha;
-    Dado removido;
-    while (!Vazia()) {
-        removido = Desempilhar();
-        if (removido.tipo != c) {
-            aux->Empilhar(removido);
-        }
-    }
+void Pilha::EncontraValores(int a, int b) {
+    if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
 
-    while (!aux->Vazia()) {
-        Empilhar(aux->Desempilhar());
-    }
-    delete aux;
-}
-
-void Pilha::SomaEspecial(char c) {
-    Pilha* aux = new Pilha;
-    Dado removido;
-    int soma = 0;
+    Pilha* aux = new Pilha();
+    Dado n;
 
     while (!Vazia()) {
-        removido = Desempilhar();
-        aux->Empilhar(removido);
-        if (removido.tipo == c) {
-            soma += removido.valor;
+        n = Desempilhar();
+        if (n.valor > a && n.valor < b) {
+            imprimir_dado(n);
         }
+        aux->Empilhar(n);
     }
 
     while (!aux->Vazia()) {
         Empilhar(aux->Desempilhar());
     }
 
-    cout << soma << endl;
 
     delete aux;
 }
@@ -169,18 +131,14 @@ int main() {
             case 'r': // remover
                 imprimir_dado(pilha.Desempilhar());
                 break;
-            case 's': // remover
-                char c;
-                cin >> c;
-                pilha.SomaEspecial(c);
-                break;
             case 'l': // limpar tudo
                 pilha.LimparTudo();
                 break;
-            case 'x': // limpar tudo
-                char b;
+            case 'b': // limpar tudo
+                int a, b;
+                cin >> a;
                 cin >> b;
-                pilha.RemocaoEspecial(b);
+                pilha.EncontraValores(a, b);
                 break;
             case 'e': // espiar 
                 if (!pilha.Vazia())

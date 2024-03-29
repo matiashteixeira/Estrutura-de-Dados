@@ -111,6 +111,8 @@ void Pilha::RemocaoEspecial(char c) {
 }
 
 void Pilha::SomaEspecial(char c) {
+    if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
+
     Pilha* aux = new Pilha;
     Dado removido;
     int soma = 0;

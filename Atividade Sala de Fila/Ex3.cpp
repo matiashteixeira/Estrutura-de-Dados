@@ -10,7 +10,7 @@ using namespace std;
 
 struct Dado {
     string nome;
-    string premio;
+    int premio;
     char tipo;
     int tempo;
 };
@@ -49,6 +49,8 @@ public:
     inline void Primeiro();
     // Informa se a Fila está Vazia.
     inline bool Vazia();
+    void VaiDarTempo(int t);
+    void Ordenar();
 private:
     Noh* mPtPrimeiro;
     Noh* mPtrUltimo;
@@ -108,6 +110,61 @@ bool Fila::Vazia() {
     return tamanho == 0;
 }
 
+void Fila::Ordenar() {
+    Dado a;
+    Fila* aux = new Fila();
+    Fila* resultante = new Fila();
+    int tam = tamanho;
+
+    while (tamanho != 0) {
+        a = Desenfileirar();
+        while (!Vazia()) {
+            if (a.tempo > mPtPrimeiro->mDado.tempo) {
+                aux->Enfileirar(a);
+                a = Desenfileirar();
+            }
+            else {
+                aux->Enfileirar(Desenfileirar());
+            }
+        }
+        resultante->Enfileirar(a);
+        tam--;
+        while (!aux->Vazia()) {
+            Enfileirar(aux->Desenfileirar());
+        }
+    }
+
+    while (!resultante->Vazia()) {
+        Enfileirar(resultante->Desenfileirar());
+    }
+
+    delete aux;
+    delete resultante;
+}
+
+void Fila::VaiDarTempo(int t) {
+    if (this->Vazia()) throw runtime_error("Erro: Fila vazia!");
+
+    Fila* aux = new Fila();
+    int soma = 0;
+
+    while (!Vazia()) {
+        if (mPtPrimeiro->mDado.tempo < t && soma < t) {
+            soma += mPtPrimeiro->mDado.tempo;
+            imprimir_dado(Desenfileirar());
+        }
+        else {
+            aux->Enfileirar(Desenfileirar());
+        }
+    }
+
+    while (!aux->Vazia()) {
+        Enfileirar(aux->Desenfileirar());
+    }
+
+    cout << soma << endl;
+    delete aux;
+}
 
 int main() {
     Fila fila;
@@ -126,6 +183,11 @@ int main() {
                 break;
             case 'l': // limpar tudo
                 fila.LimparTudo();
+                break;
+            case 't': // limpar tudo
+                int t;
+                cin >> t;
+                fila.VaiDarTempo(t);
                 break;
             case 'e': // espiar                
                 fila.Primeiro();

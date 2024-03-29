@@ -50,8 +50,7 @@ public:
     inline void Topo();
     // Informa se a pilha está Vazia.
     inline bool Vazia();
-    void RemoveInferior(int entrada);
-    void Ordenar();
+    void RemocaoEspecial(int entrada);
     //Remove todos os valores inferiores ao parametro
 private:
     Noh* mPtTopo;
@@ -60,21 +59,24 @@ private:
 };
 
 Pilha::Pilha() {
-    tamanho = 0;
     mPtTopo = NULL;
+    tamanho = 0;
 }
 
 Pilha::~Pilha() {
     LimparTudo();
+    delete mPtTopo;
 }
 
 Dado Pilha::Desempilhar() {
     if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
-    Dado aux = mPtTopo->mDado;
-    Noh *temp = mPtTopo;
+    Noh* temp = mPtTopo;
+    Dado aux = temp->mDado;
+
     mPtTopo = mPtTopo->mProx;
-    delete temp;
     tamanho--;
+
+    delete temp;
     return aux;
     // completar com o código, caso não esteja vazia
 }
@@ -94,16 +96,18 @@ void Pilha::LimparTudo() {
 
 void Pilha::Topo() {
     if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
-    cout << "Nome: " << mPtTopo->mDado.nome << " Tipo: " << mPtTopo->mDado.tipo << " Valor: " << mPtTopo->mDado.valor;
+    imprimir_dado(mPtTopo->mDado);
 }
 
 bool Pilha::Vazia() {
-    if (tamanho == 0) return true;
-    return false;
+    return tamanho == 0;
 }
 
-void Pilha::RemoveInferior(int entrada) {
+void Pilha::RemocaoEspecial(int entrada) {
+    if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
+
     Pilha* aux = new Pilha();
+
     while (!Vazia()) {
         Dado n = Desempilhar();
         if (n.valor <= entrada) {
@@ -113,49 +117,13 @@ void Pilha::RemoveInferior(int entrada) {
             imprimir_dado(n);
         }
     }
+
     while (!aux->Vazia()) {
         Empilhar(aux->Desempilhar());
     }
     delete aux;
 }
 
-void Pilha::Ordenar() {
-    Pilha* aux = new Pilha;
-    Dado removido1, removido2;
-    removido1 = Desempilhar();
-    if (aux->Vazia()) {
-        aux->Empilhar(removido1);
-    }
-
-    while (!Vazia()) {
-        removido1 = Desempilhar();
-        if (aux->Vazia()) {
-            aux->Empilhar(removido1);
-        }
-        else {
-            removido2 = aux->Desempilhar();
-
-            if (removido1.valor >= removido2.valor) {
-                aux->Empilhar(removido2);
-                aux->Empilhar(removido1);
-            }
-            else {
-                while (!aux->Vazia() && removido1.valor < removido2.valor) {
-                    Empilhar(removido2);
-                    removido2 = aux->Desempilhar();
-                }
-                aux->Empilhar(removido1);
-                aux->Empilhar(removido2);
-            }
-        }
-    }
-
-    while (!aux->Vazia()) {
-        Dado n = aux->Desempilhar();
-        Empilhar(n);
-    }
-    delete aux;
-}
 
 int main() {
     Pilha pilha;
@@ -178,13 +146,10 @@ int main() {
             case 'e': // espiar                
                 pilha.Topo();
                 break;
-            case 'o': // espiar                
-                pilha.Ordenar();
-                break;
             case 'x': // espiar  
                 int entrada;
                 cin >> entrada;
-                pilha.RemoveInferior(entrada);
+                pilha.RemocaoEspecial(entrada);
                 break;
             case 'f': // finalizar
                 // checado no do-while

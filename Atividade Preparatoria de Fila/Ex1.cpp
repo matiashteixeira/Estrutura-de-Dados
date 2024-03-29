@@ -26,8 +26,7 @@ void imprimir_dado(const Dado& umDado) {
 class Fila {
 private:
     Dado* mFila;
-    int posPrimeiro, posUltimo;
-    int tamanho;
+    int posPrimeiro, posUltimo, tamanho;
 public:
     // Constrói fila vazia.
     Fila();
@@ -48,9 +47,9 @@ public:
 };
 
 Fila::Fila() {
+    mFila = new Dado[CAPACIDADE_FILA];
     posPrimeiro = FILAVAZIA;
     posUltimo = FILAVAZIA;
-    mFila = new Dado[CAPACIDADE_FILA];
     tamanho = 0;
 }
 
@@ -60,25 +59,30 @@ Fila::~Fila() {
 
 Dado Fila::Desenfileirar() {
     if (this->Vazia()) throw runtime_error("Erro: fila vazia!");
+
     Dado aux = mFila[posPrimeiro];
-    tamanho--;
-    if (Vazia()) {
+
+    if (posPrimeiro == posUltimo) {
         posPrimeiro = FILAVAZIA;
         posUltimo = FILAVAZIA;
     }
     else {
-        posPrimeiro++;
-        posPrimeiro = posPrimeiro % CAPACIDADE_FILA;
+        posPrimeiro = (posPrimeiro + 1) % CAPACIDADE_FILA;
     }
+
+    tamanho--;
     return aux;
 }
 
 void Fila::Enfileirar(const Dado& d) {
     if (this->Cheia()) throw runtime_error("Erro: fila cheia!");
-    posUltimo++;
-    posUltimo = posUltimo % CAPACIDADE_FILA;
+
+    if (Vazia()) {
+        posPrimeiro++;
+    }
+
+    posUltimo = (posUltimo + 1) % CAPACIDADE_FILA;
     mFila[posUltimo] = d;
-    if (Vazia()) posPrimeiro++;
     tamanho++;
 }
 

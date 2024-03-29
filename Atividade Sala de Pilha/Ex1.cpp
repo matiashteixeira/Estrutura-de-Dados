@@ -69,7 +69,7 @@ Pilha::~Pilha() {
 Dado Pilha::Desempilhar() {
     if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
     Dado aux = mPtTopo->mDado;
-    Noh *temp = mPtTopo;
+    Noh* temp = mPtTopo;
     mPtTopo = mPtTopo->mProx;
     delete temp;
     tamanho--;
@@ -101,17 +101,18 @@ bool Pilha::Vazia() {
 }
 
 void Pilha::RemoveInferior(int entrada) {
+    if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
     Pilha aux;
     while (!Vazia()) {
         Dado n = Desempilhar();
-            if (n.valor >= entrada){
-                aux.Empilhar(n);
-            }
-            else{
-                imprimir_dado(n);
-            }
+        if (n.valor >= entrada) {
+            aux.Empilhar(n);
+        }
+        else {
+            imprimir_dado(n);
+        }
     }
-    while (!aux.Vazia()){
+    while (!aux.Vazia()) {
         Empilhar(aux.Desempilhar());
     }
 }

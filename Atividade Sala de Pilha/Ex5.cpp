@@ -63,6 +63,7 @@ Dado Pilha::Desempilhar() {
     // completar com código necessário caso pilha não esteja vazia 
     Dado topo = mPilha[posTopo];
     posTopo--;
+    tamanho--;
     return topo;
 }
 
@@ -94,6 +95,7 @@ bool Pilha::Cheia() {
 }
 
 void Pilha::RemocaoEspecial(char c) {
+    if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
     Pilha* aux = new Pilha;
     Dado removido;
     while (!Vazia()) {
@@ -106,6 +108,8 @@ void Pilha::RemocaoEspecial(char c) {
     while (!aux->Vazia()) {
         Empilhar(aux->Desempilhar());
     }
+
+    delete aux;
 }
 
 

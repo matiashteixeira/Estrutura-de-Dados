@@ -50,7 +50,7 @@ public:
     inline void Topo();
     // Informa se a pilha está Vazia.
     inline bool Vazia();
-    void RemoveInferior(int entrada);
+    bool compararNomes(const string& nome1, const string& nome2);
     void Ordenar();
     //Remove todos os valores inferiores ao parametro
 private:
@@ -60,21 +60,23 @@ private:
 };
 
 Pilha::Pilha() {
-    tamanho = 0;
     mPtTopo = NULL;
+    tamanho = 0;
 }
 
 Pilha::~Pilha() {
     LimparTudo();
+    delete mPtTopo;
 }
 
 Dado Pilha::Desempilhar() {
     if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
-    Dado aux = mPtTopo->mDado;
     Noh* temp = mPtTopo;
+    Dado aux = temp->mDado;
     mPtTopo = mPtTopo->mProx;
-    delete temp;
     tamanho--;
+
+    delete temp;
     return aux;
     // completar com o código, caso não esteja vazia
 }
@@ -94,34 +96,39 @@ void Pilha::LimparTudo() {
 
 void Pilha::Topo() {
     if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
-    cout << "Nome: " << mPtTopo->mDado.nome << " Tipo: " << mPtTopo->mDado.tipo << " Valor: " << mPtTopo->mDado.valor;
+    imprimir_dado(mPtTopo->mDado);
 }
 
 bool Pilha::Vazia() {
-    if (tamanho == 0) return true;
-    return false;
+    return tamanho == 0;
 }
 
-void Pilha::RemoveInferior(int entrada) {
-    Pilha* aux = new Pilha();
-    while (!Vazia()) {
-        Dado n = Desempilhar();
-        if (n.valor >= entrada) {
-            aux->Empilhar(n);
-        }
-        else {
-            imprimir_dado(n);
-        }
+
+bool Pilha::compararNomes(const string& nome1, const string& nome2) {
+    int tamanho = min(nome1.size(), nome2.size());
+
+    for (int i = 0; i < tamanho; ++i)
+    {
+        if (nome1[i] < nome2[i])
+            return true;
+        else if (nome1[i] > nome2[i])
+            return false;
     }
-    while (!aux->Vazia()) {
-        Empilhar(aux->Desempilhar());
-    }
-    delete aux;
+
+    if (nome1.size() < nome2.size())
+        return true;
+    else if (nome1.size() > nome2.size())
+        return false;
+    else
+        return true; // Nomes são iguais
 }
 
 void Pilha::Ordenar() {
+    if (this->Vazia()) throw runtime_error("Erro: pilha vazia!");
+
     Pilha* aux = new Pilha;
-    Dado removido1, removido2;
+    Dado removido1;
+
     removido1 = Desempilhar();
     if (aux->Vazia()) {
         aux->Empilhar(removido1);
@@ -133,19 +140,15 @@ void Pilha::Ordenar() {
             aux->Empilhar(removido1);
         }
         else {
-            removido2 = aux->Desempilhar();
 
-            if (removido1.nome > removido2.nome) {
-                aux->Empilhar(removido2);
+            if (!compararNomes(removido1.nome, aux->mPtTopo->mDado.nome)) {
                 aux->Empilhar(removido1);
             }
             else {
-                while (!aux->Vazia() && removido1.nome < removido2.nome) {
-                    Empilhar(removido2);
-                    removido2 = aux->Desempilhar();
+                while (!aux->Vazia() && compararNomes(removido1.nome, aux->mPtTopo->mDado.nome)) {
+                    Empilhar(aux->Desempilhar());
                 }
                 aux->Empilhar(removido1);
-                aux->Empilhar(removido2);
             }
         }
     }
@@ -180,11 +183,6 @@ int main() {
                 break;
             case 'o': // espiar                
                 pilha.Ordenar();
-                break;
-            case 'x': // espiar  
-                int entrada;
-                cin >> entrada;
-                pilha.RemoveInferior(entrada);
                 break;
             case 'f': // finalizar
                 // checado no do-while
