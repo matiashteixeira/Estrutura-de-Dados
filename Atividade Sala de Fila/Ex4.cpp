@@ -10,7 +10,7 @@ using namespace std;
 
 struct Dado {
     string nome;
-    string premio;
+    int premio;
     char tipo;
     int tempo;
 };
@@ -49,6 +49,7 @@ public:
     inline void Primeiro();
     // Informa se a Fila está Vazia.
     inline bool Vazia();
+    void RetornaPremio(char t);
 private:
     Noh* mPtPrimeiro;
     Noh* mPtrUltimo;
@@ -108,6 +109,35 @@ bool Fila::Vazia() {
     return tamanho == 0;
 }
 
+void Fila::RetornaPremio(char t) {
+    if (this->Vazia()) throw runtime_error("Erro: Fila vazia!");
+
+    Fila* diferentes = new Fila();
+    Fila* iguais = new Fila();
+    int soma = 0;
+
+    while (!Vazia()) {
+        if (mPtPrimeiro->mDado.tipo == t) {
+            soma += mPtPrimeiro->mDado.premio;
+            iguais->Enfileirar(Desenfileirar());
+        }
+        else {
+            diferentes->Enfileirar(Desenfileirar());
+        }
+    }
+
+    while (!iguais->Vazia()) {
+        Enfileirar(iguais->Desenfileirar());
+    }
+
+    while (!diferentes->Vazia()) {
+        Enfileirar(diferentes->Desenfileirar());
+    }
+
+    cout << soma << endl;
+    delete diferentes;
+    delete iguais;
+}
 
 int main() {
     Fila fila;
@@ -126,6 +156,11 @@ int main() {
                 break;
             case 'l': // limpar tudo
                 fila.LimparTudo();
+                break;
+            case 'p': // limpar tudo
+                char t;
+                cin >> t;
+                fila.RetornaPremio(t);
                 break;
             case 'e': // espiar                
                 fila.Primeiro();
