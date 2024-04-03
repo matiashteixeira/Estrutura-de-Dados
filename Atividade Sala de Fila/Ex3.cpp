@@ -152,9 +152,6 @@ void Fila::Ordenar() {
         }
     }
 
-
-
-
     delete aux;
     delete resultante;
 }
@@ -164,6 +161,8 @@ void Fila::VaiDarTempo(int t) {
 
     Fila* aux = new Fila();
     int soma = 0;
+
+    Ordenar();
 
 
     while (!Vazia()) {

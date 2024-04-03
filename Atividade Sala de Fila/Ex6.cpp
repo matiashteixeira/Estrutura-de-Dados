@@ -107,6 +107,8 @@ bool Fila::Cheia() {
 }
 
 void Fila::Contagem(char t) {
+    if (this->Vazia()) throw runtime_error("Erro: fila vazia!");
+
     int soma = 0;
     Fila* aux = new Fila();
     Dado n;

@@ -39,8 +39,6 @@ public:
     void Empilhar(const Dado& d);
     // Apagar todos os dados da pilha.
     void LimparTudo();
-    void RemocaoEspecial(char c);
-    void SomaEspecial(char c);
     void RemoveMaisAntigo();
     // Imprime o valor que está no topo sem desempilhar.
     inline void Topo();
@@ -116,44 +114,6 @@ bool Pilha::Cheia() {
     return tamanho == (TAMANHOPILHA);
 }
 
-void Pilha::RemocaoEspecial(char c) {
-    Pilha* aux = new Pilha;
-    Dado removido;
-    while (!Vazia()) {
-        removido = Desempilhar();
-        if (removido.tipo != c) {
-            aux->Empilhar(removido);
-        }
-    }
-
-    while (!aux->Vazia()) {
-        Empilhar(aux->Desempilhar());
-    }
-    delete aux;
-}
-
-void Pilha::SomaEspecial(char c) {
-    Pilha* aux = new Pilha;
-    Dado removido;
-    int soma = 0;
-
-    while (!Vazia()) {
-        removido = Desempilhar();
-        aux->Empilhar(removido);
-        if (removido.tipo == c) {
-            soma += removido.valor;
-        }
-    }
-
-    while (!aux->Vazia()) {
-        Empilhar(aux->Desempilhar());
-    }
-
-    cout << soma << endl;
-
-    delete aux;
-}
-
 int main() {
     Pilha pilha;
     Dado info;
@@ -169,18 +129,8 @@ int main() {
             case 'r': // remover
                 imprimir_dado(pilha.Desempilhar());
                 break;
-            case 's': // remover
-                char c;
-                cin >> c;
-                pilha.SomaEspecial(c);
-                break;
             case 'l': // limpar tudo
                 pilha.LimparTudo();
-                break;
-            case 'x': // limpar tudo
-                char b;
-                cin >> b;
-                pilha.RemocaoEspecial(b);
                 break;
             case 'e': // espiar 
                 if (!pilha.Vazia())

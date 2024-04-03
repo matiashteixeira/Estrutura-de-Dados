@@ -19,11 +19,11 @@ struct dado {
 };
 
 bool operator > (dado d1, dado d2) {
-    return d1.energiaGasta > d2.energiaGasta;
+    return d1.prioridade > d2.prioridade;
 }
 
 bool operator < (dado d1, dado d2) {
-    return d1.energiaGasta < d2.energiaGasta;
+    return d1.prioridade < d2.prioridade;
 }
 
 ostream& operator<<(ostream& output, const dado& d) {
@@ -99,7 +99,7 @@ void MaxHeap::corrigeDescendo(int i) {
 
 void MaxHeap::corrigeSubindo(int i) {
     int p = pai(i);
-    if (heap[i].energiaGasta > heap[p].energiaGasta) {
+    if (heap[i] > heap[p]) {
         swap(heap[i], heap[p]);
         corrigeSubindo(p);
     }

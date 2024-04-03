@@ -23,9 +23,9 @@ private:
     inline int esquerda(int getPai);
     inline int direita(int getPai);
     void arruma();
-    void compete(int i);
+    void insere(int i);
     void verBaseMaior();
-    void copiaMaior(int i);
+    void compete(int i);
     void copiaSubindo(int i);
 
 public:
@@ -42,7 +42,7 @@ torneio::torneio(int vet[], int tam) {
     capacidade = capacidade - 1 + tam;
     heap = new int[capacidade];
     inicioDados = capacidade - tam;
-    memcpy(heap, vet, tam * sizeof(int));
+    memcpy(&heap[inicioDados], vet, tam * sizeof(int));
 
     tamanho = tam;
     arruma();
@@ -55,7 +55,7 @@ torneio::~torneio() {
 
 // Retorno a posição do nó pai de um determinado elemento
 int torneio::pai(int filho) {
-    return filho / 2 - 1;
+    return (filho - 1) / 2;
 }
 
 // Retorna o filho à esquerda de um determinado nó
@@ -68,10 +68,10 @@ int torneio::direita(int pai) {
     return pai * 2 + 2;
 }
 
-void torneio::copiaMaior(int i) {
+void torneio::compete(int i) {
     int esq = esquerda(i);
     int dir = direita(i);
-    int maior = INVALIDO;
+    int maior;
 
     if (esq < capacidade) {
         if (dir < capacidade && heap[dir] > heap[esq]) {
@@ -82,8 +82,9 @@ void torneio::copiaMaior(int i) {
         }
         heap[i] = heap[maior];
     }
+
     else {
-        heap[maior] = INVALIDO;
+        heap[i] = INVALIDO;
     }
 }
 
@@ -98,26 +99,32 @@ void torneio::copiaSubindo(int i) {
 // Faz a competição por cada posição vencedora no vetor e imprime o vencedor
 void torneio::arruma() {
     for (int i = inicioDados - 1; i >= 0; i--) {
-        copiaMaior(i);
+        compete(i);
     }
+
     cout << heap[0];
 }
 
 // Faz a competição entre os elementos
-void torneio::compete(int i) {
+void torneio::insere(int i) {
+    if (tamanho == capacidade) throw runtime_error("Erro ao retirar raiz");
 
+    heap[tamanho + inicioDados] = i;
+    copiaSubindo(tamanho + inicioDados);
+    tamanho++;
 }
 
 int main() {
     int tam;
     cin >> tam;
 
-    int vet[tam];
+    int* vet = new int[tam];
     for (int i = 0; i < tam; i++) {
         cin >> vet[i];
     }
 
     torneio participantes(vet, tam);
 
+    delete[] vet;
     return 0;
 }
