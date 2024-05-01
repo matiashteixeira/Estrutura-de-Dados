@@ -13,7 +13,7 @@ struct equipe {
 class noh {
     friend class lista;
 private:
-    equipe elenco; 
+    equipe elenco;
     noh* proximo;
 public:
     noh(equipe d);
@@ -29,21 +29,21 @@ private:
     noh* primeiro;
     noh* ultimo;
     int tamanho;
-    void removeTodos(); 
-    void imprimeReversoAux(noh* umNoh);
+    void removeTodos();
+    //void imprimeReversoAux(noh* umNoh);
 public:
     lista();
-    lista(const lista& umaLista);
+    //lista(const lista& umaLista);
     ~lista();
-    lista& operator=(const lista& umaLista);
+    //lista& operator=(const lista& umaLista);
     void insereVazia(equipe elenco);
     void insereNoFim(equipe elenco);
     void insereNoInicio(equipe elenco);
     void insereNaPosicao(int posicao, equipe elenco);
-    int procura(string valor); 
+    int procura(string valor);
     void imprime();
     void imprimeDado(equipe elenco);
-    void imprimeReverso();
+    //void imprimeReverso();
     inline bool vazia();
     void removeNoFim();
     void removeNoInicio();
@@ -55,13 +55,8 @@ lista::lista() {
     tamanho = 0;
 }
 
-lista::lista(const lista& umaLista) {
-
-}
-
 lista::~lista() {
-    delete primeiro;
-    delete ultimo;
+    removeTodos();
 }
 
 void lista::removeTodos() {
@@ -70,7 +65,7 @@ void lista::removeTodos() {
     }
 }
 
-lista& lista::operator=(const lista& umaLista) {
+/*lista& lista::operator=(const lista& umaLista) {
     // limpa a lista atual
     removeTodos();
     // percorre a lista recebida como parâmetro, copiando os dados
@@ -82,15 +77,13 @@ lista& lista::operator=(const lista& umaLista) {
     }
 
     return *this;
-}
+}*/
 
 void lista::insereVazia(equipe elenco) {
     noh* novo = new noh(elenco);
     primeiro = novo;
     ultimo = novo;
     tamanho = 1;
-
-    delete novo;
 }
 
 void lista::insereNoFim(equipe elenco) {
@@ -102,8 +95,6 @@ void lista::insereNoFim(equipe elenco) {
         ultimo->proximo = novo;
         ultimo = novo;
         tamanho++;
-
-        delete novo;
     }
 }
 
@@ -116,8 +107,6 @@ void lista::insereNoInicio(equipe elenco) {
         novo->proximo = primeiro;
         primeiro = novo;
         tamanho++;
-
-        delete novo;
     }
 }
 
@@ -143,35 +132,23 @@ void lista::insereNaPosicao(int posicao, equipe elenco) {
         novo->proximo = aux->proximo;
         aux->proximo = novo;
         tamanho++;
-
-        delete novo;
-        delete aux;
     }
-
 }
 
 int lista::procura(string valor) {
     if (vazia()) throw runtime_error("Lista vazia!");
 
     noh* aux = primeiro;
-    bool n = false;
+    int posicao = 0;
 
     while (aux != NULL) {
         if (aux->elenco.nomeEquipe == valor) {
-            imprimeDado(aux->elenco);
-            n = true;
-            aux = NULL;
+            return posicao;
         }
-        else {
-            aux = aux->proximo;
-        }
+        aux = aux->proximo;
     }
 
-    if(!n){
-        cout << "Nao encontrado" << endl;
-    }
-
-    delete aux;
+    return -1;
 }
 
 void lista::imprime() {
@@ -179,14 +156,10 @@ void lista::imprime() {
 
     noh* aux = primeiro;
 
-    cout << primeiro->elenco.nomeEquipe << endl;
-    
-    //while (aux != NULL) {
-      //  cout << "( " << aux->elenco.nomeEquipe << ", " << aux->elenco.lider << ", " << aux->elenco.linguagem << ", " << aux->elenco.qtdMembros << ")" << endl;
-        //aux = aux->proximo;
-    //}
-
-    delete aux;
+    while (aux != NULL) {
+        cout << "(" << aux->elenco.nomeEquipe << ", " << aux->elenco.lider << ", " << aux->elenco.linguagem << ", " << aux->elenco.qtdMembros << ")" << endl;
+        aux = aux->proximo;
+    }
 }
 
 void lista::imprimeDado(equipe elenco) {
@@ -204,23 +177,22 @@ void lista::removeNoFim() {
     noh* aux = primeiro;
     noh* anterior = NULL;
 
-    while(aux->proximo != NULL){
+    while (aux->proximo != NULL) {
         anterior = aux;
         aux = aux->proximo;
     }
 
-    if(anterior == NULL){
+    if (anterior == NULL) {
         primeiro = NULL;
-    }else{
+        ultimo = NULL;
+    }
+    else {
         anterior->proximo = NULL;
+        ultimo = anterior;
     }
 
     delete aux;
-    primeiro = aux->proximo;
-    delete aux;
     tamanho--;
-
-    if (vazia()) ultimo = NULL;
 }
 
 void lista::removeNoInicio() {
@@ -245,24 +217,30 @@ int main() {
         try {
             cin >> comando;
             switch (comando) {
-            case 'i': 
+            case 'i':
                 cin >> info.nomeEquipe >> info.lider >> info.linguagem >> info.qtdMembros;
                 minhaLista.insereNoInicio(info);
                 break;
-            case 'h': 
+            case 'h':
                 cin >> info.nomeEquipe >> info.lider >> info.linguagem >> info.qtdMembros;
                 minhaLista.insereNoFim(info);
                 break;
-            case 'm': 
+            case 'm':
                 cin >> posicao;
                 cin >> info.nomeEquipe >> info.lider >> info.linguagem >> info.qtdMembros;
                 minhaLista.insereNaPosicao(posicao, info);
                 break;
-            case 's': 
+            case 's':
                 cin >> nomeEquipe;
-                cout << minhaLista.procura(nomeEquipe) << endl;
+                posicao = minhaLista.procura(nomeEquipe);
+                if (posicao == -1) {
+                    cout << "Nao encontrado" << endl;
+                }
+                else {
+                    cout << posicao << endl;
+                }
                 break;
-            case 'r': 
+            case 'r':
                 minhaLista.removeNoInicio();
                 break;
             case 'a':
@@ -271,7 +249,7 @@ int main() {
             case 'p':
                 minhaLista.imprime();
                 break;
-            case 'f': 
+            case 'f':
                 break;
             default:
                 cerr << "comando inválido\n";
