@@ -257,7 +257,6 @@ int main() {
                 minhaLista.imprime();
                 break;
             case 'f': // finalizar
-                // checado no do-while
                 break;
             default:
                 cerr << "comando inválido\n";

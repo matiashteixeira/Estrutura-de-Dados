@@ -146,6 +146,7 @@ int lista::procura(string valor) {
             return posicao;
         }
         aux = aux->proximo;
+        posicao++;
     }
 
     return -1;
