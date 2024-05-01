@@ -164,7 +164,6 @@ void Fila::VaiDarTempo(int t) {
 
     Ordenar();
 
-
     while (!Vazia()) {
         if (mPtPrimeiro->mDado.tempo + soma < t) {
             soma += mPtPrimeiro->mDado.tempo;
